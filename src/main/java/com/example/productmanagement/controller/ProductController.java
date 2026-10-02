@@ -37,8 +37,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping
 public class ProductController {
 
-    /** Base path for every product endpoint, versioned from the start. */
-    private static final String SLUG = "/api/v1/products";
+    /** Base path for every product endpoint */
+    private static final String BASE_PATH = "/api/v1/products";
 
     private final ProductService productService;
 
@@ -46,14 +46,14 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(SLUG)
+    @GetMapping(BASE_PATH)
     @Operation(summary = "Return all products")
     @ApiResponse(responseCode = "200", description = "List of all products")
     public List<ProductResponse> getProducts() {
         return productService.listProducts();
     }
 
-    @GetMapping(SLUG + "/{id}")
+    @GetMapping(BASE_PATH + "/{id}")
     @Operation(summary = "Return product by ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Product found"),
@@ -66,7 +66,7 @@ public class ProductController {
         return productService.getProductById(id);
     }
 
-    @PostMapping(SLUG)
+    @PostMapping(BASE_PATH)
     @Operation(summary = "Create a new product")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Product created"),
@@ -84,7 +84,7 @@ public class ProductController {
         return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping(SLUG + "/{id}")
+    @PutMapping(BASE_PATH + "/{id}")
     @Operation(summary = "Update product by ID")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Product updated"),
@@ -101,7 +101,7 @@ public class ProductController {
         return productService.updateProduct(id, request);
     }
 
-    @DeleteMapping(SLUG + "/{id}")
+    @DeleteMapping(BASE_PATH + "/{id}")
     @Operation(summary = "Delete product by ID")
     @ApiResponses({
         @ApiResponse(responseCode = "204", description = "Product deleted"),
