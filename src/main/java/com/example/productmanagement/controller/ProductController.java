@@ -2,6 +2,7 @@ package com.example.productmanagement.controller;
 
 import com.example.productmanagement.dto.ProductRequest;
 import com.example.productmanagement.dto.ProductResponse;
+import com.example.productmanagement.dto.QuantityRequest;
 import com.example.productmanagement.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -113,5 +115,43 @@ public class ProductController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
+    }
+
+    @PatchMapping(BASE_PATH + "/{id}/quantity/add")
+    @Operation(summary = "Add to product stock")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Stock increased"),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Amount failed validation",
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(
+                responseCode = "404",
+                description = "No product with this id",
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    })
+    public ProductResponse addQuantity(@PathVariable Long id, @Valid @RequestBody QuantityRequest request) {
+        return productService.addProductQuantity(id, request.quantity());
+    }
+
+    @PatchMapping(BASE_PATH + "/{id}/quantity/subtract")
+    @Operation(summary = "Subtract from product stock")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Stock decreased"),
+        @ApiResponse(
+                responseCode = "400",
+                description = "Amount failed validation",
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(
+                responseCode = "404",
+                description = "No product with this id",
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(
+                responseCode = "409",
+                description = "Not enough stock available",
+                content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    })
+    public ProductResponse subtractQuantity(@PathVariable Long id, @Valid @RequestBody QuantityRequest request) {
+        return productService.subtractProductQuantity(id, request.quantity());
     }
 }

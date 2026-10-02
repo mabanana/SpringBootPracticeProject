@@ -1,16 +1,41 @@
+# Test configuration, activated with @ActiveProfiles("test").
+#
+# No test classes exist yet, so nothing loads this file at the moment. It is kept
+# correct and ready so that the first test written does not accidentally run
+# against the development database.
+
 spring:
+  # A separate in-memory database from the one in application.yml. Sharing the
+  # dev store would let a test see, or mutate, development data.
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
     password: ""
+
   jpa:
+    # Drop and recreate the schema around each run, so tests start from a known
+    # empty state and leave nothing behind.
+    #
+    # `create-drop` rather than `update` matters more here than in development:
+    # with `update`, a column rename in an entity silently leaves the old column
+    # in the test schema, so stale state can mask a real problem.
     hibernate:
       ddl-auto: create-drop
+
     open-in-view: false
+
   sql:
     init:
+      # Never run data.sql in tests.
+      #
+      # src/main/resources is on the test classpath, so seed rows would load into
+      # the test database and assertions could pass or fail depending on data the
+      # test never arranged. Each test should create the rows it needs.
       mode: never
+
   h2:
     console:
+      # No browser SQL shell during tests — it serves no purpose and only adds
+      # a surface to attack if a context is ever exposed.
       enabled: false
