@@ -2,7 +2,6 @@ package com.example.productmanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
@@ -13,4 +12,6 @@ import java.math.BigDecimal;
  * set a generated identity from the body.
  */
 public record ProductRequest(
-        @NotBlank String productName, @NotNull @Positive BigDecimal price, @NotNull @PositiveOrZero Integer quantity) {}
+        @NotBlank String productName,
+        @NotNull @PositiveOrZero BigDecimal price,
+        @NotNull @PositiveOrZero Integer quantity) {}
